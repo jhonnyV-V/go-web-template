@@ -1,0 +1,11 @@
+package pages
+
+import "github.com/markbates/goth"
+
+templ HelloPost(user goth.User) {
+	@Base(user) {
+		<div class="bg-green-100 p-4 shadow-md rounded-lg mt-6">
+			<p>Hello, { user.Email }</p>
+		</div>
+	}
+}

@@ -1,0 +1,72 @@
+package pages
+
+import (
+	"github.com/markbates/goth"
+	"snippet-sharing/cmd/web/components"
+)
+
+templ loginOrAvatar(user goth.User) {
+	if user.Email == "" {
+		<div class='flex max-lg:ml-auto space-x-4'>
+			<a
+				href="/login"
+				class='px-4 py-2 text-sm rounded-full font-bold text-white border-2 border-[#007bff] bg-[#007bff] transition-all ease-in-out duration-300 hover:bg-transparent hover:text-[#007bff]'
+			>
+				Sign up
+			</a>
+		</div>
+	} else {
+		<div class="flex flex-col flex-wrap items-center justify-center">
+			@components.Avatar(components.AvatarProps{
+				ContainerClass: "rounded-full w-12",
+				Source: user.AvatarURL,
+			})
+			{user.NickName}
+		</div>
+	}
+}
+
+templ Header(user goth.User) {
+	<header class='flex shadow-xl py-4 px-4 sm:px-10 bg-black/20 font-[sans-serif] min-h-[70px] tracking-wide relative z-50'>
+		<div class='flex flex-wrap items-center justify-end gap-5 w-full'>
+			@loginOrAvatar(user)
+		</div>
+	</header>
+}
+
+templ Base(user goth.User) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width,initial-scale=1"/>
+			<title>Snippet Sharing</title>
+			<link href="assets/css/output.css" rel="stylesheet"/>
+			<script src="assets/js/htmx.min.js"></script>
+		</head>
+		<body class="bg-gray-800 text-white">
+			@Header(user)
+			<main class="h-full w-full">
+				{ children... }
+			</main>
+		</body>
+	</html>
+}
+
+templ BaseWithoutHeader() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width,initial-scale=1"/>
+			<title>Snippet Sharing</title>
+			<link href="assets/css/output.css" rel="stylesheet"/>
+			<script src="assets/js/htmx.min.js"></script>
+		</head>
+		<body class="bg-gray-800 text-white">
+			<main class="w-full h-full">
+				{ children... }
+			</main>
+		</body>
+	</html>
+}

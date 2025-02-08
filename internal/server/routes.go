@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"snippet-sharing/cmd/web"
+	"snippet-sharing/cmd/web/pages"
 	"snippet-sharing/internal/server/routes"
 
 	"github.com/a-h/templ"
@@ -35,18 +36,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 		"/login",
 		echo.WrapHandler(
 			templ.Handler(
-				web.LoginForm("/auth/github"),
+				pages.LoginForm("/auth/github"),
 			),
 		),
 	)
 
-	e.GET("/",
-		echo.WrapHandler(
-			templ.Handler(
-				web.Home(),
-			),
-		),
-	)
+	e.GET("/", routes.HomeWebHandler, routes.GetUserIfAvailableMiddlewarefunc)
 
 	e.GET("/hello", routes.HelloWebHandler, routes.ProtectedRoutesMiddlewarefunc)
 

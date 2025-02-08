@@ -8,10 +8,22 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/jmoiron/sqlx"
 )
+
+type User struct {
+	UserID   string `db:"userId"`
+	Provider string `db:"provider"`
+}
+
+type Snippet struct {
+	Language  string `db:"language"`
+	Snippet   string `db:"snippet"`
+	UserID    string `db:"userId"`
+	SnippetId string `db:"snippetId"`
+}
 
 // Service represents a service that interacts with a database.
 type Service interface {

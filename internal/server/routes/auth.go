@@ -9,7 +9,6 @@ import (
 	"github.com/markbates/goth/gothic"
 )
 
-
 var CompleteUserAuth = func(res http.ResponseWriter, req *http.Request) (goth.User, error) {
 	providerName, err := gothic.GetProviderName(req)
 	if err != nil {
@@ -110,6 +109,7 @@ func AuthLogout(c echo.Context) error {
 type ContextWithUser struct {
 	echo.Context
 	User    goth.User
+	IsEmpty bool
 }
 
 func (c ContextWithUser) GetUser() goth.User {
@@ -134,6 +134,31 @@ func ProtectedRoutesMiddlewarefunc(next echo.HandlerFunc) echo.HandlerFunc {
 		cc := &ContextWithUser{
 			c,
 			user,
+			false,
+		}
+		return next(cc)
+	}
+}
+
+func GetUserIfAvailableMiddlewarefunc(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		q := c.Request().URL.Query()
+		// TODO: dynamically select the provider
+		q.Add("provider", "github")
+		c.Request().URL.RawQuery = q.Encode()
+
+		req := c.Request()
+		res := c.Response().Writer
+		isLoged := true
+		user, err := CompleteUserAuth(res, req)
+		if err != nil {
+			isLoged = false
+			user = goth.User{}
+		}
+		cc := &ContextWithUser{
+			c,
+			user,
+			isLoged,
 		}
 		return next(cc)
 	}
